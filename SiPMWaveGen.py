@@ -1,6 +1,6 @@
-import numpy as np
-import matplotlib.pyplot as plt
 from math import exp
+
+import numpy as np
 
 
 def peResponse(t, delay, nphotons, speAmplitude, riseTime, fallTime):
@@ -11,8 +11,8 @@ def peResponse(t, delay, nphotons, speAmplitude, riseTime, fallTime):
 
 
 def waveGen(t, speAmplitude, riseTime, fallTime):
-    response = np.array([peResponse(ti, 0, 0, 0, 1, 1) for ti in t])
-    true_response = np.array([peResponse(ti, 0, 0, 0, 1, 1) for ti in t])
+    response = np.array([0 for ti in t])
+    true_response = np.array([0 for ti in t])
 
     while True:
         nhits = 0
@@ -35,8 +35,13 @@ def waveGen(t, speAmplitude, riseTime, fallTime):
 
     return [response, true_response]
 
-def getADC(pi, nBits, res, voltMin):
-    guessADC = (pi - voltMin) / res
+
+def getRawADC(p, res):
+    return round(p / res)
+
+
+def getADC(p, nBits, res, voltMin):
+    guessADC = round((p - voltMin) / res)
     if guessADC < 0:
         return 0
     if guessADC > (2 ** nBits - 1):
