@@ -116,26 +116,11 @@ def HitFinder(p,
             ThresholdADC = baseline - (cfdThreshold * (baseline - hitAmplitude))
 
             hitStartIndex = i
-            exactStartIndex = False
             for j in range(hitPeakIndex, 0, -1):
-                if p[j] == ThresholdADC:
-                    hitStartIndex = j
-                    exactStartIndex = True
-                    break
-                if (p[j] < ThresholdADC and p[j - 1] > ThresholdADC):
+                if (p[j] <= ThresholdADC and p[j - 1] > ThresholdADC):
                     hitStartIndex = j
                     break
 
-            if exactStartIndex:
-                hitStartIndexList = np.append(hitStartIndexList, hitStartIndex)
-            else:
-                if hitStartIndex >= 3:
-                    V2 = p[hitStartIndex]
-                    t2 = hitStartIndex
-                    V1 = p[hitStartIndex - 1]
-                    t1 = hitStartIndex - 1
-                    m = (V2 - V1) / (t2 - t1)
-                    extrapolatedHitStartIndex = ((ThresholdADC - V1) / m) + t1
-                    hitStartIndexList = np.append(hitStartIndexList, extrapolatedHitStartIndex)
+            hitStartIndexList = np.append(hitStartIndexList, hitStartIndex)
 
     return [hitStartIndexList, hitLogic, baseline, noiseSigma]

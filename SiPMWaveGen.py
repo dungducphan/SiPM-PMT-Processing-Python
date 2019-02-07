@@ -16,14 +16,14 @@ def waveGen(t, speAmplitude, noiseSigmaInVolt, riseTime, fallTime):
 
     while True:
         nhits = 0
-        nhits = np.random.poisson(2)
+        nhits = np.random.poisson(1)
         if nhits > 0:
             break
 
     while True:
         checkSumHits = 0
         for aHit in range(0, nhits):
-            delay = np.random.uniform(t[0], t[-1])
+            delay = np.random.uniform(t[50], t[-50])
             nphotons = np.random.poisson(3)
             checkSumHits = checkSumHits + nphotons
             temp =  np.array([peResponse(ti, delay, nphotons, speAmplitude, riseTime, fallTime) for ti in t])
