@@ -10,7 +10,7 @@ def peResponse(t, delay, nphotons, speAmplitude, riseTime, fallTime):
         return -nphotons * speAmplitude * exp(-(t - delay) / fallTime) * (1 - exp(-(t - delay) / riseTime))
 
 
-def waveGen(t, speAmplitude, riseTime, fallTime):
+def waveGen(t, speAmplitude, noiseSigmaInVolt, riseTime, fallTime):
     response = np.array([0 for ti in t])
     true_response = np.array([0 for ti in t])
 
@@ -27,7 +27,7 @@ def waveGen(t, speAmplitude, riseTime, fallTime):
             nphotons = np.random.poisson(3)
             checkSumHits = checkSumHits + nphotons
             temp =  np.array([peResponse(ti, delay, nphotons, speAmplitude, riseTime, fallTime) for ti in t])
-            noiseResponse = np.array([np.random.normal(0, speAmplitude / 15) for ti in t])
+            noiseResponse = np.array([np.random.normal(0, noiseSigmaInVolt) for ti in t])
             response = response + noiseResponse + temp
             true_response = true_response + temp
         if checkSumHits > 0:
@@ -58,9 +58,12 @@ def aTrigger(dt, nsamples, speAmplitude, riseTime, fallTime):
 
     return [t, p, true_p]
 
-def aDigitizedTrigger(dt, nsamples, speAmplitude, riseTime, fallTime, nBits, voltMin, dynamicRange, offset):
+
+def aDigitizedTrigger(dt, nsamples, speAmplitude, noiseSigmaInVolt, riseTime, fallTime, nBits, voltMin, dynamicRange,
+                      offset):
     t = np.arange(0, nsamples*dt, dt)
-    [p, true_p] = waveGen(t, speAmplitude=speAmplitude, riseTime=riseTime, fallTime=fallTime)
+    [p, true_p] = waveGen(t, speAmplitude=speAmplitude, noiseSigmaInVolt=noiseSigmaInVolt, riseTime=riseTime,
+                          fallTime=fallTime)
     digital_p = digitizeWave(p, nBits=nBits, voltMin=voltMin, dynamicRange=dynamicRange, offset=offset)
     digital_true_p = digitizeWave(true_p, nBits=nBits, voltMin=voltMin, dynamicRange=dynamicRange, offset=offset)
 
